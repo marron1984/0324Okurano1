@@ -27,7 +27,21 @@ CREAM = (245, 240, 232)
 
 def load_font(size, bold=False):
     """Load Japanese font from local fonts/ directory."""
-    # Use downloaded Noto Sans CJK fonts (fonts/ directory)
+    # Use Noto Serif JP (明朝体) for elegant appearance
+    serif_font = "fonts/NotoSerifJP-Variable.ttf"
+    if os.path.exists(serif_font):
+        try:
+            font = ImageFont.truetype(serif_font, size)
+            # Set weight via variation axis: Bold=700, Medium=500
+            try:
+                font.set_variation_by_axes([700 if bold else 500])
+            except Exception:
+                pass
+            return font
+        except Exception:
+            pass
+
+    # Fallback to Noto Sans JP
     if bold:
         primary = "fonts/NotoSansJP-Bold.otf"
         fallback = "fonts/NotoSansJP-Medium.otf"
