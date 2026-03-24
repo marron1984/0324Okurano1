@@ -1,0 +1,725 @@
+/* === Base Reset & Variables === */
+:root {
+    --color-bg: #0a0a0a;
+    --color-bg-dark: #050505;
+    --color-gold: #c9a84c;
+    --color-gold-light: #e8d5a3;
+    --color-cream: #f5f0e8;
+    --color-green-dark: #2d4a3e;
+    --color-green: #4a7c6f;
+    --color-stone: #8b8578;
+    --color-ink: #1a1a2e;
+    --font-serif: 'Zen Old Mincho', 'Noto Serif JP', serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: var(--font-serif);
+    overflow: hidden;
+}
+
+/* === Reel Container (9:16) === */
+.reel-container {
+    width: 1080px;
+    height: 1920px;
+    position: relative;
+    overflow: hidden;
+    background: var(--color-bg);
+    transform-origin: center center;
+}
+
+/* Scale to fit viewport */
+@media (max-height: 1920px) {
+    .reel-container {
+        transform: scale(calc(100vh / 1920));
+    }
+}
+
+@media (max-width: 1080px) {
+    .reel-container {
+        transform: scale(min(calc(100vw / 1080), calc(100vh / 1920)));
+    }
+}
+
+/* === Scene Base === */
+.scene {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.scene.active {
+    opacity: 1;
+    z-index: 10;
+}
+
+.scene-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* === Progress Bar === */
+.progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 100;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--color-gold);
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
+/* === Navigation Dots === */
+.nav-dots {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 100;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: var(--color-gold);
+    transform: scale(1.3);
+}
+
+/* === Controls === */
+.controls {
+    position: absolute;
+    bottom: 40px;
+    right: 30px;
+    display: flex;
+    gap: 15px;
+    z-index: 100;
+}
+
+.control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.5);
+    color: var(--color-cream);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.control-btn:hover {
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+}
+
+/* === Text Animations === */
+.text-reveal {
+    display: block;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    transition-delay: var(--delay, 0s);
+}
+
+.scene.active .text-reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(40px) scale(0.8);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition-delay: var(--delay, 0s);
+}
+
+.scene.active .char {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.fade-up {
+    display: block;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease, transform 1s ease;
+    transition-delay: var(--delay, 0s);
+}
+
+.scene.active .fade-up {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ================================
+   SCENE 1: Opening - Zen Circle
+   ================================ */
+.scene-1 .scene-bg {
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 70%);
+}
+
+.zen-circle-container {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 40px;
+}
+
+.zen-circle {
+    width: 300px;
+    height: 300px;
+}
+
+.enso {
+    fill: none;
+    stroke: var(--color-gold);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 510;
+    stroke-dashoffset: 510;
+    filter: drop-shadow(0 0 20px rgba(201, 168, 76, 0.3));
+}
+
+.scene-1.active .enso {
+    animation: drawEnso 2s ease-in-out 0.3s forwards;
+}
+
+@keyframes drawEnso {
+    0% { stroke-dashoffset: 510; opacity: 0; }
+    10% { opacity: 1; }
+    100% { stroke-dashoffset: 30; opacity: 1; }
+}
+
+.opening-text {
+    font-size: 120px;
+    color: var(--color-cream);
+    letter-spacing: 40px;
+    z-index: 1;
+    font-weight: 700;
+    text-shadow: 0 0 40px rgba(201, 168, 76, 0.2);
+}
+
+.opening-subtitle {
+    font-size: 36px;
+    color: var(--color-gold);
+    letter-spacing: 30px;
+    margin-top: 30px;
+    z-index: 1;
+    font-weight: 300;
+}
+
+/* ================================
+   SCENE 2: Concept
+   ================================ */
+.scene-2 .scene-bg {
+    background: linear-gradient(180deg, #0d1b16 0%, #1a2f28 50%, #0d1b16 100%);
+}
+
+.bamboo-left,
+.bamboo-right {
+    position: absolute;
+    width: 60px;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 1s ease 0.3s;
+}
+
+.scene-2.active .bamboo-left,
+.scene-2.active .bamboo-right {
+    opacity: 0.15;
+}
+
+.bamboo-left {
+    left: 30px;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 180px,
+        rgba(74, 124, 111, 0.5) 180px,
+        rgba(74, 124, 111, 0.5) 185px
+    );
+}
+
+.bamboo-left::before {
+    content: '';
+    position: absolute;
+    left: 25px;
+    top: 0;
+    width: 10px;
+    height: 100%;
+    background: rgba(74, 124, 111, 0.3);
+}
+
+.bamboo-right {
+    right: 30px;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 200px,
+        rgba(74, 124, 111, 0.5) 200px,
+        rgba(74, 124, 111, 0.5) 205px
+    );
+}
+
+.concept-content {
+    text-align: center;
+    z-index: 2;
+    padding: 0 80px;
+}
+
+.vertical-line {
+    width: 1px;
+    height: 0;
+    background: var(--color-gold);
+    margin: 0 auto 60px;
+    transition: height 1s ease 0.2s;
+}
+
+.scene-2.active .vertical-line {
+    height: 100px;
+}
+
+.concept-text {
+    font-size: 52px;
+    color: var(--color-cream);
+    line-height: 2;
+    margin-bottom: 50px;
+    font-weight: 400;
+}
+
+.concept-sub {
+    font-size: 34px;
+    color: var(--color-gold-light);
+    font-weight: 300;
+    letter-spacing: 8px;
+}
+
+/* Floating Petals */
+.floating-petals {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.petal {
+    position: absolute;
+    top: -20px;
+    left: var(--x);
+    width: 12px;
+    height: 16px;
+    background: radial-gradient(ellipse, rgba(232, 180, 188, 0.6), rgba(232, 180, 188, 0.1));
+    border-radius: 50% 50% 50% 0;
+    opacity: 0;
+}
+
+.scene-2.active .petal,
+.scene-5.active .petal {
+    animation: petalFall var(--duration) ease-in-out var(--delay) infinite;
+}
+
+.petal.gold {
+    background: radial-gradient(ellipse, rgba(201, 168, 76, 0.5), rgba(201, 168, 76, 0.1));
+}
+
+@keyframes petalFall {
+    0% {
+        opacity: 0;
+        transform: translateY(0) rotate(0deg) translateX(0);
+    }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.5; }
+    100% {
+        opacity: 0;
+        transform: translateY(1920px) rotate(360deg) translateX(100px);
+    }
+}
+
+/* ================================
+   SCENE 3: Cuisine
+   ================================ */
+.scene-3 .scene-bg {
+    background: radial-gradient(ellipse at center 40%, #1a1410 0%, #0a0a0a 70%);
+}
+
+.dish-showcase {
+    text-align: center;
+    z-index: 2;
+}
+
+.dish-frame {
+    position: relative;
+    margin-bottom: 60px;
+}
+
+.dish-icon {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+}
+
+.scene-3.active .dish-icon {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.dish-svg {
+    width: 280px;
+    height: 280px;
+}
+
+.plate {
+    fill: none;
+    stroke: var(--color-gold);
+    stroke-width: 1.5;
+    opacity: 0.6;
+}
+
+.dish-detail {
+    fill: none;
+    stroke: var(--color-gold-light);
+    stroke-width: 1;
+    opacity: 0.5;
+}
+
+.garnish {
+    fill: var(--color-green);
+    opacity: 0.7;
+}
+
+/* Steam Animation */
+.steam {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.steam-line {
+    position: absolute;
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(to top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.15));
+    border-radius: 50%;
+    opacity: 0;
+}
+
+.steam-line:nth-child(1) { left: -15px; }
+.steam-line:nth-child(2) { left: 0; }
+.steam-line:nth-child(3) { left: 15px; }
+
+.scene-3.active .steam-line {
+    animation: steamRise 2.5s ease-in-out var(--delay) infinite;
+}
+
+@keyframes steamRise {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scaleX(1);
+    }
+    50% {
+        opacity: 0.4;
+        transform: translateY(-30px) scaleX(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-70px) scaleX(2);
+    }
+}
+
+.dish-text h2 {
+    font-size: 56px;
+    color: var(--color-cream);
+    margin-bottom: 30px;
+    font-weight: 600;
+    letter-spacing: 10px;
+}
+
+.dish-text p {
+    font-size: 32px;
+    color: var(--color-gold-light);
+    margin-bottom: 15px;
+    font-weight: 300;
+    letter-spacing: 5px;
+}
+
+.zen-pattern {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 200px;
+    opacity: 0;
+    transition: opacity 1s ease 1s;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 18px,
+            rgba(201, 168, 76, 0.06) 18px,
+            rgba(201, 168, 76, 0.06) 20px
+        );
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.scene-3.active .zen-pattern {
+    opacity: 1;
+}
+
+/* ================================
+   SCENE 4: Atmosphere
+   ================================ */
+.scene-4 .scene-bg {
+    background: linear-gradient(180deg, #0a0a0a 0%, #151520 50%, #0a0a0a 100%);
+}
+
+.atmosphere-content {
+    text-align: center;
+    z-index: 2;
+}
+
+.stone-garden {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 0 auto 60px;
+}
+
+.ripple-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.ripple {
+    position: absolute;
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+.scene-4.active .ripple {
+    animation: rippleExpand 3s ease-out var(--delay) infinite;
+}
+
+@keyframes rippleExpand {
+    0% {
+        width: 20px;
+        height: 20px;
+        opacity: 0.6;
+    }
+    100% {
+        width: 350px;
+        height: 350px;
+        opacity: 0;
+    }
+}
+
+.stone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 30px;
+    background: radial-gradient(ellipse, var(--color-stone), #5a5548);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.3s;
+}
+
+.scene-4.active .stone {
+    opacity: 0.8;
+}
+
+.atmosphere-text h2 {
+    font-size: 56px;
+    color: var(--color-cream);
+    margin-bottom: 40px;
+    font-weight: 600;
+    letter-spacing: 15px;
+}
+
+.feature-list p {
+    font-size: 34px;
+    color: var(--color-gold-light);
+    margin-bottom: 20px;
+    font-weight: 300;
+    letter-spacing: 5px;
+}
+
+/* ================================
+   SCENE 5: CTA
+   ================================ */
+.scene-5 .scene-bg {
+    background: radial-gradient(ellipse at center, #1a1510 0%, #0a0a0a 70%);
+}
+
+.cta-content {
+    text-align: center;
+    z-index: 2;
+}
+
+.logo-final {
+    margin-bottom: 80px;
+}
+
+.zen-circle-small {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 30px;
+}
+
+.enso-small {
+    fill: none;
+    stroke: var(--color-gold);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 380;
+    stroke-dashoffset: 380;
+}
+
+.scene-5.active .enso-small {
+    animation: drawEnso 1.5s ease-in-out 0.2s forwards;
+}
+
+.logo-final h1 {
+    font-size: 100px;
+    color: var(--color-cream);
+    letter-spacing: 30px;
+    font-weight: 700;
+    text-shadow: 0 0 30px rgba(201, 168, 76, 0.2);
+}
+
+.location-text {
+    font-size: 30px;
+    color: var(--color-gold);
+    letter-spacing: 20px;
+    font-weight: 300;
+}
+
+.info-section {
+    margin-bottom: 60px;
+}
+
+.info-section p {
+    font-size: 28px;
+    color: var(--color-cream);
+    margin-bottom: 10px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    opacity: 0.8;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 20px 60px;
+    border: 1px solid var(--color-gold);
+    color: var(--color-gold);
+    font-size: 28px;
+    font-family: var(--font-serif);
+    letter-spacing: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 50px;
+}
+
+.cta-button:hover {
+    background: var(--color-gold);
+    color: var(--color-bg);
+}
+
+.social-tag {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 3px;
+}
+
+.final-petals {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* === Transition Effects === */
+.scene.fade-out {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+/* === Ambient Glow === */
+.scene-1::after,
+.scene-5::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(201, 168, 76, 0.05) 0%, transparent 70%);
+    z-index: 0;
+    animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
