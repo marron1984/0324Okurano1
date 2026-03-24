@@ -26,26 +26,23 @@ CREAM = (245, 240, 232)
 
 
 def load_font(size, bold=False):
-    """Try to load a Japanese font, fallback gracefully."""
-    font_paths = [
-        "/usr/share/fonts/truetype/noto/NotoSansCJK-Bold.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
-        "/usr/share/fonts/noto-cjk/NotoSansCJK-Bold.ttc",
-        "/usr/share/fonts/truetype/noto/NotoSerifCJK-Bold.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc",
-        "/usr/share/fonts/google-noto-cjk/NotoSansCJK-Bold.ttc",
-    ]
-    if not bold:
-        font_paths = [p.replace("-Bold", "-Regular").replace("-Bold", "-Light") for p in font_paths] + font_paths
+    """Load Japanese font from local fonts/ directory."""
+    # Use downloaded Noto Sans CJK fonts (fonts/ directory)
+    if bold:
+        primary = "fonts/NotoSansJP-Bold.otf"
+        fallback = "fonts/NotoSansJP-Medium.otf"
+    else:
+        primary = "fonts/NotoSansJP-Medium.otf"
+        fallback = "fonts/NotoSansJP-Bold.otf"
 
-    for fp in font_paths:
+    for fp in [primary, fallback]:
         if os.path.exists(fp):
             try:
                 return ImageFont.truetype(fp, size)
             except Exception:
                 continue
 
-    # Search for any CJK font
+    # System font fallback
     import glob
     for pattern in ["/usr/share/fonts/**/*CJK*", "/usr/share/fonts/**/*Noto*", "/usr/share/fonts/**/*.ttc", "/usr/share/fonts/**/*.ttf"]:
         matches = glob.glob(pattern, recursive=True)
@@ -243,13 +240,13 @@ def add_badge(frame, text, t_fade=1.0):
 
     frame = frame.copy()
     draw = ImageDraw.Draw(frame)
-    font = load_font(24)
+    font = load_font(26)
 
     bbox = draw.textbbox((0, 0), text, font=font)
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
 
-    pad_x, pad_y = 36, 12
+    pad_x, pad_y = 40, 14
     bw = tw + pad_x * 2
     bh = th + pad_y * 2
     bx = (WIDTH - bw) // 2
@@ -298,13 +295,13 @@ def add_cta_button(frame, text, t_fade=1.0):
 
     frame = frame.copy()
     draw = ImageDraw.Draw(frame)
-    font = load_font(26)
+    font = load_font(29)
 
     bbox = draw.textbbox((0, 0), text, font=font)
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
 
-    pad_x, pad_y = 50, 18
+    pad_x, pad_y = 54, 20
     bw = tw + pad_x * 2
     bh = th + pad_y * 2
     bx = (WIDTH - bw) // 2
@@ -367,9 +364,16 @@ def main():
     # Load images
     print("\n[1/3] Loading images...")
     images = {}
+    # Find new photo (0148) by scanning directory
+    new_photo_0148 = None
+    for f in os.listdir('.'):
+        if '0148' in f and (f.endswith('.JPG') or f.endswith('.jpg')):
+            new_photo_0148 = f
+            break
+
     image_files = {
         "setting-sakura": "assets/setting-sakura.jpg",
-        "table-overhead": "assets/table-overhead.jpg",
+        "private-room": new_photo_0148 or "assets/table-overhead.jpg",  # 新写真に差替
         "dining-closeup": "assets/dining-closeup.jpg",
         "dining-group": "assets/dining-group.jpg",
         "dining-conversation": "assets/dining-conversation.jpg",
@@ -379,6 +383,21 @@ def main():
 
     for name, path in image_files.items():
         img = Image.open(path).convert('RGB')
+        # Apply EXIF rotation
+        from PIL import ExifTags
+        try:
+            exif = img._getexif()
+            if exif:
+                for tag, value in exif.items():
+                    if ExifTags.TAGS.get(tag) == 'Orientation':
+                        if value == 3:
+                            img = img.rotate(180, expand=True)
+                        elif value == 6:
+                            img = img.rotate(270, expand=True)
+                        elif value == 8:
+                            img = img.rotate(90, expand=True)
+        except Exception:
+            pass
         # Pre-crop to 9:16 with some margin for Ken Burns
         images[name] = crop_to_fill(img, int(WIDTH * 1.2), int(HEIGHT * 1.2))
         print(f"  Loaded: {name} ({img.size[0]}x{img.size[1]})")
@@ -404,17 +423,17 @@ def main():
             "overlay": "dark",
         },
         {
-            "name": "個室空間",
-            "image": "table-overhead",
+            "name": "個室会食",
+            "image": "private-room",
             "duration": 3.0,
-            "effect": "pan_right",
+            "effect": "zoom_slow",
             "overlay": "bottom",
         },
         {
             "name": "会話シーン",
             "image": "dining-conversation",
             "duration": 3.0,
-            "effect": "zoom_slow",
+            "effect": "pan_left",
             "overlay": "bottom",
         },
         {
@@ -503,64 +522,64 @@ def main():
         # Text animation progress
         t_text = scene_time  # seconds into scene
 
-        # === Per-scene text overlays (接待重視) ===
+        # === Per-scene text overlays (接待重視 / 文字1.1倍) ===
         if scene_idx == 0:
             # HOOK: 接待の課題提起
             badge_t = max(0, (t_text - 0.2) / 0.4)
             frame = add_badge(frame, "接 待 ・ ビ ジ ネ ス 会 食", min(1.0, badge_t))
 
             texts = [
-                {"text": "「次の接待、", "y": 750, "size": 64, "color": WHITE, "bold": True, "delay": 0.13},
-                {"text": "どこにしよう…」", "y": 830, "size": 64, "color": WHITE, "bold": True, "delay": 0.23},
-                {"text": "その悩み、ここで解決します", "y": 930, "size": 34, "color": GOLD, "delay": 0.6},
+                {"text": "「次の接待、", "y": 750, "size": 70, "color": WHITE, "bold": True, "delay": 0.13},
+                {"text": "どこにしよう…」", "y": 840, "size": 70, "color": WHITE, "bold": True, "delay": 0.23},
+                {"text": "その悩み、ここで解決します", "y": 945, "size": 37, "color": GOLD, "delay": 0.6},
             ]
             frame = add_text_overlay(frame, texts, t_text)
-            frame = add_gold_line(frame, max(0, (t_text - 1.2) / 0.8), y=920)
+            frame = add_gold_line(frame, max(0, (t_text - 1.2) / 0.8), y=935)
 
         elif scene_idx == 1:
-            # 個室 → 接待に最適な空間
+            # 個室会食 → 接待に最適な空間
             texts = [
-                {"text": "周囲を気にしない完全個室", "y": 1540, "size": 44, "color": WHITE, "delay": 0.1},
-                {"text": "商談も安心の静寂空間", "y": 1600, "size": 30, "color": GOLD, "delay": 0.3},
+                {"text": "周囲を気にしない完全個室", "y": 1530, "size": 48, "color": WHITE, "delay": 0.1},
+                {"text": "商談も安心の静寂空間", "y": 1595, "size": 33, "color": GOLD, "delay": 0.3},
             ]
             frame = add_text_overlay(frame, texts, t_text)
 
         elif scene_idx == 2:
             # 会話シーン → 信頼構築
             texts = [
-                {"text": "距離が縮まる、和の空間", "y": 1540, "size": 44, "color": WHITE, "delay": 0.1},
-                {"text": "大切な商談を成功に導く", "y": 1600, "size": 30, "color": GOLD, "delay": 0.3},
+                {"text": "距離が縮まる、和の空間", "y": 1530, "size": 48, "color": WHITE, "delay": 0.1},
+                {"text": "大切な商談を成功に導く", "y": 1595, "size": 33, "color": GOLD, "delay": 0.3},
             ]
             frame = add_text_overlay(frame, texts, t_text)
 
         elif scene_idx == 3:
             # 料理 → 接待の格を上げる
             texts = [
-                {"text": "「さすが」と言わせる", "y": 1540, "size": 44, "color": WHITE, "delay": 0.1},
-                {"text": "旬の懐石で格上のおもてなし", "y": 1600, "size": 30, "color": GOLD, "delay": 0.3},
+                {"text": "「さすが」と言わせる", "y": 1530, "size": 48, "color": WHITE, "delay": 0.1},
+                {"text": "旬の懐石で格上のおもてなし", "y": 1595, "size": 33, "color": GOLD, "delay": 0.3},
             ]
             frame = add_text_overlay(frame, texts, t_text)
 
         elif scene_idx == 4:
             # カウンター → ライブ感
             texts = [
-                {"text": "目の前で仕上げる特別感", "y": 1540, "size": 44, "color": WHITE, "delay": 0.1},
-                {"text": "会話が自然と弾む演出", "y": 1600, "size": 30, "color": GOLD, "delay": 0.3},
+                {"text": "目の前で仕上げる特別感", "y": 1530, "size": 48, "color": WHITE, "delay": 0.1},
+                {"text": "会話が自然と弾む演出", "y": 1595, "size": 33, "color": GOLD, "delay": 0.3},
             ]
             frame = add_text_overlay(frame, texts, t_text)
 
         elif scene_idx == 5:
             # グループ → 成功の会食
             texts = [
-                {"text": "選んで正解だった ——", "y": 1560, "size": 44, "color": WHITE, "delay": 0.1},
-                {"text": "お客様の満足が、信頼になる", "y": 1620, "size": 30, "color": GOLD, "delay": 0.3},
+                {"text": "選んで正解だった ——", "y": 1545, "size": 48, "color": WHITE, "delay": 0.1},
+                {"text": "お客様の満足が、信頼になる", "y": 1610, "size": 33, "color": GOLD, "delay": 0.3},
             ]
             frame = add_text_overlay(frame, texts, t_text)
 
         elif scene_idx == 6:
             # CTA: 接待予約
             texts = [
-                {"text": "大阪で選ばれる接待の場", "y": 480, "size": 34, "color": GOLD, "delay": 0.1},
+                {"text": "大阪で選ばれる接待の場", "y": 480, "size": 37, "color": GOLD, "delay": 0.1},
             ]
             frame = add_text_overlay(frame, texts, t_text)
 
@@ -568,15 +587,15 @@ def main():
             logo_t = max(0, (t_text - 0.5) / 0.5)
             if logo_t > 0:
                 logo_texts = [
-                    {"text": "禅園", "y": 830, "size": 120, "color": WHITE, "bold": True, "delay": 0.0},
-                    {"text": "西 梅 田", "y": 980, "size": 36, "color": GOLD, "delay": 0.1},
+                    {"text": "禅園", "y": 820, "size": 132, "color": WHITE, "bold": True, "delay": 0.0},
+                    {"text": "西 梅 田", "y": 980, "size": 40, "color": GOLD, "delay": 0.1},
                 ]
                 frame = add_text_overlay(frame, logo_texts, min(1.0, logo_t))
 
             # 接待向けポイント
             info_texts = [
-                {"text": "西梅田駅 徒歩3分 / 完全個室", "y": 1380, "size": 26, "color": WHITE, "delay": 0.33},
-                {"text": "接待コース ¥8,800〜", "y": 1420, "size": 28, "color": GOLD, "delay": 0.5},
+                {"text": "西梅田駅 徒歩3分 / 完全個室", "y": 1370, "size": 29, "color": WHITE, "delay": 0.33},
+                {"text": "接待コース ¥8,800〜", "y": 1415, "size": 31, "color": GOLD, "delay": 0.5},
             ]
             frame = add_text_overlay(frame, info_texts, t_text)
 
@@ -586,7 +605,7 @@ def main():
 
             # Handle
             handle_texts = [
-                {"text": "@zenen_nishiumeda", "y": 1700, "size": 22, "color": (180, 180, 180), "delay": 0.7},
+                {"text": "@zenen_nishiumeda", "y": 1700, "size": 24, "color": (180, 180, 180), "delay": 0.7},
             ]
             frame = add_text_overlay(frame, handle_texts, t_text)
 
