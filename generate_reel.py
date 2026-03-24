@@ -16,7 +16,7 @@ import math
 # === Config ===
 WIDTH, HEIGHT = 1080, 1920
 FPS = 30
-OUTPUT = "reel_zenen_nishiumeda.mp4"
+OUTPUT = "reel_zenen_settai.mp4"
 ASSETS = "assets"
 
 # Color palette
@@ -394,54 +394,54 @@ def main():
     font_logo_sub = load_font(36)
     print("  Fonts ready")
 
-    # === Define scenes ===
+    # === Define scenes (接待重視構成) ===
     scenes = [
         {
-            "name": "Hook",
+            "name": "Hook - 接待の悩み",
             "image": "setting-sakura",
-            "duration": 2.5,
+            "duration": 3.0,
             "effect": "zoom_in",
             "overlay": "dark",
         },
         {
-            "name": "Setting",
+            "name": "個室空間",
             "image": "table-overhead",
             "duration": 3.0,
             "effect": "pan_right",
             "overlay": "bottom",
         },
         {
-            "name": "Cuisine",
-            "image": "dining-closeup",
+            "name": "会話シーン",
+            "image": "dining-conversation",
             "duration": 3.0,
             "effect": "zoom_slow",
             "overlay": "bottom",
         },
         {
-            "name": "Group Dining",
-            "image": "dining-group",
+            "name": "おもてなし料理",
+            "image": "dining-closeup",
             "duration": 3.0,
             "effect": "pan_left",
             "overlay": "bottom",
         },
         {
-            "name": "Conversation",
-            "image": "dining-conversation",
-            "duration": 2.5,
-            "effect": "zoom_in",
-            "overlay": "bottom",
-        },
-        {
-            "name": "Counter",
+            "name": "カウンター接客",
             "image": "counter-service",
             "duration": 3.0,
             "effect": "pan_right",
             "overlay": "bottom",
         },
         {
-            "name": "CTA",
+            "name": "信頼の会食",
+            "image": "dining-group",
+            "duration": 2.5,
+            "effect": "zoom_in",
+            "overlay": "bottom",
+        },
+        {
+            "name": "CTA - 接待予約",
             "image": "celebration-menu",
-            "duration": 4.0,
+            "duration": 4.5,
             "effect": "zoom_slow",
             "overlay": "full",
         },
@@ -503,43 +503,64 @@ def main():
         # Text animation progress
         t_text = scene_time  # seconds into scene
 
-        # === Per-scene text overlays ===
+        # === Per-scene text overlays (接待重視) ===
         if scene_idx == 0:
-            # HOOK: badge + title + gold line
+            # HOOK: 接待の課題提起
             badge_t = max(0, (t_text - 0.2) / 0.4)
-            frame = add_badge(frame, "大 阪 ・ 西 梅 田", min(1.0, badge_t))
+            frame = add_badge(frame, "接 待 ・ ビ ジ ネ ス 会 食", min(1.0, badge_t))
 
             texts = [
-                {"text": "知る人ぞ知る", "y": 780, "size": 72, "color": WHITE, "bold": True, "delay": 0.13},
-                {"text": "隠れ家懐石", "y": 870, "size": 72, "color": WHITE, "bold": True, "delay": 0.23},
+                {"text": "「次の接待、", "y": 750, "size": 64, "color": WHITE, "bold": True, "delay": 0.13},
+                {"text": "どこにしよう…」", "y": 830, "size": 64, "color": WHITE, "bold": True, "delay": 0.23},
+                {"text": "その悩み、ここで解決します", "y": 930, "size": 34, "color": GOLD, "delay": 0.6},
             ]
             frame = add_text_overlay(frame, texts, t_text)
-            frame = add_gold_line(frame, max(0, (t_text - 1.0) / 0.8), y=960)
+            frame = add_gold_line(frame, max(0, (t_text - 1.2) / 0.8), y=920)
 
         elif scene_idx == 1:
-            texts = [{"text": "完全個室の贅沢空間", "y": 1580, "size": 44, "color": WHITE, "delay": 0.1}]
+            # 個室 → 接待に最適な空間
+            texts = [
+                {"text": "周囲を気にしない完全個室", "y": 1540, "size": 44, "color": WHITE, "delay": 0.1},
+                {"text": "商談も安心の静寂空間", "y": 1600, "size": 30, "color": GOLD, "delay": 0.3},
+            ]
             frame = add_text_overlay(frame, texts, t_text)
 
         elif scene_idx == 2:
-            texts = [{"text": "旬を味わう懐石料理", "y": 1580, "size": 44, "color": WHITE, "delay": 0.1}]
+            # 会話シーン → 信頼構築
+            texts = [
+                {"text": "距離が縮まる、和の空間", "y": 1540, "size": 44, "color": WHITE, "delay": 0.1},
+                {"text": "大切な商談を成功に導く", "y": 1600, "size": 30, "color": GOLD, "delay": 0.3},
+            ]
             frame = add_text_overlay(frame, texts, t_text)
 
         elif scene_idx == 3:
-            texts = [{"text": "大切な方との特別なひととき", "y": 1580, "size": 44, "color": WHITE, "delay": 0.1}]
+            # 料理 → 接待の格を上げる
+            texts = [
+                {"text": "「さすが」と言わせる", "y": 1540, "size": 44, "color": WHITE, "delay": 0.1},
+                {"text": "旬の懐石で格上のおもてなし", "y": 1600, "size": 30, "color": GOLD, "delay": 0.3},
+            ]
             frame = add_text_overlay(frame, texts, t_text)
 
         elif scene_idx == 4:
-            # No text - photo only (variety in pacing)
-            pass
+            # カウンター → ライブ感
+            texts = [
+                {"text": "目の前で仕上げる特別感", "y": 1540, "size": 44, "color": WHITE, "delay": 0.1},
+                {"text": "会話が自然と弾む演出", "y": 1600, "size": 30, "color": GOLD, "delay": 0.3},
+            ]
+            frame = add_text_overlay(frame, texts, t_text)
 
         elif scene_idx == 5:
-            texts = [{"text": "目の前で仕上げる臨場感", "y": 1580, "size": 44, "color": WHITE, "delay": 0.1}]
+            # グループ → 成功の会食
+            texts = [
+                {"text": "選んで正解だった ——", "y": 1560, "size": 44, "color": WHITE, "delay": 0.1},
+                {"text": "お客様の満足が、信頼になる", "y": 1620, "size": 30, "color": GOLD, "delay": 0.3},
+            ]
             frame = add_text_overlay(frame, texts, t_text)
 
         elif scene_idx == 6:
-            # CTA scene
+            # CTA: 接待予約
             texts = [
-                {"text": "顔合わせ・接待・記念日に", "y": 500, "size": 34, "color": GOLD, "delay": 0.1},
+                {"text": "大阪で選ばれる接待の場", "y": 480, "size": 34, "color": GOLD, "delay": 0.1},
             ]
             frame = add_text_overlay(frame, texts, t_text)
 
@@ -552,15 +573,16 @@ def main():
                 ]
                 frame = add_text_overlay(frame, logo_texts, min(1.0, logo_t))
 
-            # Info
+            # 接待向けポイント
             info_texts = [
-                {"text": "西梅田駅 徒歩3分", "y": 1450, "size": 28, "color": WHITE, "delay": 0.33},
+                {"text": "西梅田駅 徒歩3分 / 完全個室", "y": 1380, "size": 26, "color": WHITE, "delay": 0.33},
+                {"text": "接待コース ¥8,800〜", "y": 1420, "size": 28, "color": GOLD, "delay": 0.5},
             ]
             frame = add_text_overlay(frame, info_texts, t_text)
 
             # CTA button
             cta_t = max(0, (t_text - 1.8) / 0.4)
-            frame = add_cta_button(frame, "ご予約はプロフィールリンクから", cta_t)
+            frame = add_cta_button(frame, "接待のご予約はプロフィールから", cta_t)
 
             # Handle
             handle_texts = [
