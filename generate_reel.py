@@ -618,7 +618,6 @@ def main():
                 {"text": "ランチ 11:00〜14:45（L.O.14:00）", "y": 1205, "size": 24, "color": (200, 200, 200), "delay": 0.65},
                 {"text": "ディナー 17:30〜22:30（L.O.21:00）", "y": 1240, "size": 24, "color": (200, 200, 200), "delay": 0.68},
                 {"text": "定休日 不定休（ハービスPLAZA定休日に準ずる）", "y": 1275, "size": 22, "color": (180, 180, 180), "delay": 0.7},
-                {"text": "接待コース ¥8,800〜", "y": 1320, "size": 33, "color": GOLD, "bold": True, "delay": 0.75},
             ]
             frame = add_text_overlay(frame, info_texts, t_text)
 
