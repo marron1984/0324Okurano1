@@ -6,155 +6,122 @@
     <title>禅園西梅田 - Instagram Reel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600;700&family=Zen+Old+Mincho:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600;700;900&family=Zen+Old+Mincho:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="reel-container" id="reel">
-        <!-- Scene 1: Opening - Zen Circle -->
-        <div class="scene scene-1 active" id="scene1">
-            <div class="scene-bg"></div>
-            <div class="zen-circle-container">
-                <svg class="zen-circle" viewBox="0 0 200 200">
-                    <circle class="enso" cx="100" cy="100" r="80" />
-                </svg>
-            </div>
-            <div class="opening-text">
-                <span class="char" style="--delay: 1.5s">禅</span>
-                <span class="char" style="--delay: 1.8s">園</span>
-            </div>
-            <div class="opening-subtitle">
-                <span class="fade-up" style="--delay: 2.4s">西 梅 田</span>
+
+        <!-- Scene 1: HOOK - 衝撃の1秒 (桜セッティング + 店名フラッシュ) -->
+        <div class="scene active" id="scene1" data-duration="2500">
+            <div class="photo-bg kenburns-zoom-in" style="background-image: url('assets/setting-sakura.jpg')"></div>
+            <div class="overlay-gradient-dark"></div>
+            <div class="scene-content hook-content">
+                <div class="hook-badge">
+                    <span>大阪・西梅田</span>
+                </div>
+                <h1 class="hook-title">
+                    <span class="line line-1">知る人ぞ知る</span>
+                    <span class="line line-2">隠れ家懐石</span>
+                </h1>
+                <div class="hook-accent"></div>
             </div>
         </div>
 
-        <!-- Scene 2: Concept -->
-        <div class="scene scene-2" id="scene2">
-            <div class="scene-bg"></div>
-            <div class="bamboo-left"></div>
-            <div class="bamboo-right"></div>
-            <div class="concept-content">
-                <div class="vertical-line"></div>
-                <p class="concept-text">
-                    <span class="text-reveal" style="--delay: 0.3s">心を整える</span>
-                    <span class="text-reveal" style="--delay: 0.8s">一杯の茶のように</span>
-                </p>
-                <p class="concept-sub">
-                    <span class="text-reveal" style="--delay: 1.5s">静寂と美食の融合</span>
-                </p>
-            </div>
-            <div class="floating-petals">
-                <div class="petal" style="--x: 20%; --delay: 0s; --duration: 4s"></div>
-                <div class="petal" style="--x: 50%; --delay: 1s; --duration: 5s"></div>
-                <div class="petal" style="--x: 80%; --delay: 2s; --duration: 3.5s"></div>
-                <div class="petal" style="--x: 35%; --delay: 0.5s; --duration: 4.5s"></div>
-                <div class="petal" style="--x: 65%; --delay: 1.5s; --duration: 3s"></div>
+        <!-- Scene 2: 空間の美しさ (テーブルセッティング俯瞰) -->
+        <div class="scene" id="scene2" data-duration="3000">
+            <div class="photo-bg kenburns-pan-right" style="background-image: url('assets/table-overhead.jpg')"></div>
+            <div class="overlay-gradient-bottom"></div>
+            <div class="scene-content bottom-text">
+                <p class="caption caption-fade">完全個室の贅沢空間</p>
             </div>
         </div>
 
-        <!-- Scene 3: Cuisine Showcase -->
-        <div class="scene scene-3" id="scene3">
-            <div class="scene-bg"></div>
-            <div class="dish-showcase">
-                <div class="dish-frame">
-                    <div class="dish-icon">
-                        <svg viewBox="0 0 120 120" class="dish-svg">
-                            <circle cx="60" cy="60" r="50" class="plate" />
-                            <path d="M35,55 Q45,35 60,40 Q75,35 85,55" class="dish-detail" />
-                            <path d="M40,60 Q60,50 80,60" class="dish-detail" />
-                            <circle cx="55" cy="52" r="3" class="garnish" />
-                            <circle cx="65" cy="48" r="2" class="garnish" />
-                            <circle cx="60" cy="58" r="2.5" class="garnish" />
-                        </svg>
-                    </div>
-                    <div class="steam">
-                        <div class="steam-line" style="--delay: 0s"></div>
-                        <div class="steam-line" style="--delay: 0.5s"></div>
-                        <div class="steam-line" style="--delay: 1s"></div>
-                    </div>
-                </div>
-                <div class="dish-text">
-                    <h2 class="text-reveal" style="--delay: 0.5s">旬の懐石料理</h2>
-                    <p class="text-reveal" style="--delay: 1.0s">四季折々の厳選素材</p>
-                    <p class="text-reveal" style="--delay: 1.5s">職人の技が光る一皿</p>
-                </div>
+        <!-- Scene 3: お料理クローズアップ -->
+        <div class="scene" id="scene3" data-duration="3000">
+            <div class="photo-bg kenburns-zoom-slow" style="background-image: url('assets/dining-closeup.jpg')"></div>
+            <div class="overlay-gradient-bottom"></div>
+            <div class="scene-content bottom-text">
+                <p class="caption caption-fade">旬を味わう懐石料理</p>
             </div>
-            <div class="zen-pattern"></div>
         </div>
 
-        <!-- Scene 4: Atmosphere -->
-        <div class="scene scene-4" id="scene4">
-            <div class="scene-bg"></div>
-            <div class="atmosphere-content">
-                <div class="stone-garden">
-                    <div class="ripple-container">
-                        <div class="ripple" style="--delay: 0s"></div>
-                        <div class="ripple" style="--delay: 0.8s"></div>
-                        <div class="ripple" style="--delay: 1.6s"></div>
-                        <div class="ripple" style="--delay: 2.4s"></div>
-                    </div>
-                    <div class="stone"></div>
+        <!-- Scene 4: 会食の雰囲気 (グループ) -->
+        <div class="scene" id="scene4" data-duration="3000">
+            <div class="photo-bg kenburns-pan-left" style="background-image: url('assets/dining-group.jpg')"></div>
+            <div class="overlay-gradient-bottom"></div>
+            <div class="scene-content bottom-text">
+                <p class="caption caption-fade">大切な方との特別なひととき</p>
+            </div>
+        </div>
+
+        <!-- Scene 5: 会話を楽しむ食事 -->
+        <div class="scene" id="scene5" data-duration="2500">
+            <div class="photo-bg kenburns-zoom-in" style="background-image: url('assets/dining-conversation.jpg')"></div>
+            <div class="overlay-vignette"></div>
+        </div>
+
+        <!-- Scene 6: カウンター接客 -->
+        <div class="scene" id="scene6" data-duration="3000">
+            <div class="photo-bg kenburns-pan-right" style="background-image: url('assets/counter-service.jpg')"></div>
+            <div class="overlay-gradient-bottom"></div>
+            <div class="scene-content bottom-text">
+                <p class="caption caption-fade">目の前で仕上げる臨場感</p>
+            </div>
+        </div>
+
+        <!-- Scene 7: CTA (寿メニュー + 店舗情報) -->
+        <div class="scene" id="scene7" data-duration="4000">
+            <div class="photo-bg kenburns-zoom-slow" style="background-image: url('assets/celebration-menu.jpg')"></div>
+            <div class="overlay-gradient-full"></div>
+            <div class="scene-content cta-content">
+                <div class="cta-top">
+                    <p class="cta-occasion caption-fade">顔合わせ・接待・記念日に</p>
                 </div>
-                <div class="atmosphere-text">
-                    <h2 class="text-reveal" style="--delay: 0.3s">禅の空間</h2>
-                    <div class="feature-list">
-                        <p class="text-reveal" style="--delay: 0.8s">◆ 完全個室</p>
-                        <p class="text-reveal" style="--delay: 1.1s">◆ 枯山水の庭園</p>
-                        <p class="text-reveal" style="--delay: 1.4s">◆ 和の趣ある設え</p>
+                <div class="cta-center">
+                    <div class="cta-logo">
+                        <span class="cta-name">禅園</span>
+                        <span class="cta-sub">西梅田</span>
+                    </div>
+                </div>
+                <div class="cta-bottom">
+                    <div class="cta-info caption-fade">
+                        <p>西梅田駅 徒歩3分</p>
+                    </div>
+                    <div class="cta-action caption-fade">
+                        <span>ご予約はプロフィールリンクから</span>
+                    </div>
+                    <div class="cta-handle caption-fade">
+                        <span>@zenen_nishiumeda</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Scene 5: Location & CTA -->
-        <div class="scene scene-5" id="scene5">
-            <div class="scene-bg"></div>
-            <div class="cta-content">
-                <div class="logo-final">
-                    <svg class="zen-circle-small" viewBox="0 0 200 200">
-                        <circle class="enso-small" cx="100" cy="100" r="60" />
-                    </svg>
-                    <h1 class="text-reveal" style="--delay: 0.3s">禅園</h1>
-                    <p class="location-text text-reveal" style="--delay: 0.6s">西 梅 田</p>
-                </div>
-                <div class="info-section">
-                    <p class="text-reveal" style="--delay: 1.0s">📍 大阪市北区梅田</p>
-                    <p class="text-reveal" style="--delay: 1.3s">西梅田駅 徒歩3分</p>
-                </div>
-                <div class="cta-button text-reveal" style="--delay: 1.8s">
-                    <span>ご予約はプロフィールから</span>
-                </div>
-                <div class="social-tag text-reveal" style="--delay: 2.2s">
-                    <span>@zenen_nishiumeda</span>
-                </div>
-            </div>
-            <div class="final-petals">
-                <div class="petal gold" style="--x: 15%; --delay: 0.5s; --duration: 5s"></div>
-                <div class="petal gold" style="--x: 40%; --delay: 1s; --duration: 4s"></div>
-                <div class="petal gold" style="--x: 70%; --delay: 0.2s; --duration: 4.5s"></div>
-                <div class="petal gold" style="--x: 85%; --delay: 1.5s; --duration: 3.5s"></div>
-            </div>
+        <!-- Instagram-style Progress Bars -->
+        <div class="story-progress" id="storyProgress">
+            <div class="progress-segment" data-scene="1"><div class="progress-fill"></div></div>
+            <div class="progress-segment" data-scene="2"><div class="progress-fill"></div></div>
+            <div class="progress-segment" data-scene="3"><div class="progress-fill"></div></div>
+            <div class="progress-segment" data-scene="4"><div class="progress-fill"></div></div>
+            <div class="progress-segment" data-scene="5"><div class="progress-fill"></div></div>
+            <div class="progress-segment" data-scene="6"><div class="progress-fill"></div></div>
+            <div class="progress-segment" data-scene="7"><div class="progress-fill"></div></div>
         </div>
 
-        <!-- Progress Bar -->
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
+        <!-- Tap Areas -->
+        <div class="tap-area tap-left" id="tapLeft"></div>
+        <div class="tap-area tap-right" id="tapRight"></div>
+
+        <!-- Sound Toggle (decorative) -->
+        <div class="sound-toggle" id="soundToggle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                <line class="sound-off-line" x1="23" y1="9" x2="17" y2="15"/>
+                <line class="sound-off-line" x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
         </div>
 
-        <!-- Navigation Dots -->
-        <div class="nav-dots">
-            <span class="dot active" data-scene="1"></span>
-            <span class="dot" data-scene="2"></span>
-            <span class="dot" data-scene="3"></span>
-            <span class="dot" data-scene="4"></span>
-            <span class="dot" data-scene="5"></span>
-        </div>
-
-        <!-- Controls -->
-        <div class="controls">
-            <button class="control-btn" id="playPauseBtn" title="再生/一時停止">▶</button>
-            <button class="control-btn" id="restartBtn" title="最初から">↺</button>
-        </div>
     </div>
 
     <script src="script.js"></script>
