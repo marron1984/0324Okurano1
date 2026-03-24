@@ -587,15 +587,15 @@ def main():
             logo_t = max(0, (t_text - 0.5) / 0.5)
             if logo_t > 0:
                 logo_texts = [
-                    {"text": "禅園", "y": 820, "size": 132, "color": WHITE, "bold": True, "delay": 0.0},
-                    {"text": "西 梅 田", "y": 980, "size": 40, "color": GOLD, "delay": 0.1},
+                    {"text": "西梅田 禅園", "y": 830, "size": 110, "color": WHITE, "bold": True, "delay": 0.0},
                 ]
                 frame = add_text_overlay(frame, logo_texts, min(1.0, logo_t))
 
-            # 接待向けポイント
+            # 店舗情報
             info_texts = [
-                {"text": "西梅田駅 徒歩3分 / 完全個室", "y": 1370, "size": 29, "color": WHITE, "delay": 0.33},
-                {"text": "接待コース ¥8,800〜", "y": 1415, "size": 31, "color": GOLD, "delay": 0.5},
+                {"text": "西梅田 禅園", "y": 1300, "size": 33, "color": WHITE, "bold": True, "delay": 0.33},
+                {"text": "西梅田駅 徒歩3分 / 完全個室", "y": 1350, "size": 29, "color": WHITE, "delay": 0.4},
+                {"text": "接待コース ¥8,800〜", "y": 1395, "size": 31, "color": GOLD, "delay": 0.5},
             ]
             frame = add_text_overlay(frame, info_texts, t_text)
 
@@ -605,7 +605,7 @@ def main():
 
             # Handle
             handle_texts = [
-                {"text": "@zenen_nishiumeda", "y": 1700, "size": 24, "color": (180, 180, 180), "delay": 0.7},
+                {"text": "@nishiumeda_zenen", "y": 1700, "size": 24, "color": (180, 180, 180), "delay": 0.7},
             ]
             frame = add_text_overlay(frame, handle_texts, t_text)
 
