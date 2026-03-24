@@ -611,11 +611,14 @@ def main():
 
             # 店舗情報
             info_texts = [
-                {"text": "〒530-0002", "y": 1150, "size": 24, "color": (200, 200, 200), "delay": 0.5},
-                {"text": "大阪府大阪市北区曽根崎新地1-3-19", "y": 1185, "size": 26, "color": WHITE, "delay": 0.55},
-                {"text": "北新地駅 徒歩1分 / 西梅田駅 徒歩3分", "y": 1225, "size": 26, "color": WHITE, "delay": 0.6},
-                {"text": "完全個室 / 2名様〜最大20名様", "y": 1270, "size": 28, "color": WHITE, "delay": 0.65},
-                {"text": "接待コース ¥8,800〜", "y": 1320, "size": 33, "color": GOLD, "bold": True, "delay": 0.7},
+                {"text": "〒530-0001", "y": 1050, "size": 24, "color": (200, 200, 200), "delay": 0.5},
+                {"text": "大阪府大阪市北区梅田2-5-25", "y": 1085, "size": 26, "color": WHITE, "delay": 0.55},
+                {"text": "ハービスPLAZA B2F", "y": 1120, "size": 26, "color": WHITE, "delay": 0.58},
+                {"text": "TEL 06-6457-1002", "y": 1160, "size": 26, "color": WHITE, "delay": 0.6},
+                {"text": "ランチ 11:00〜14:45（L.O.14:00）", "y": 1205, "size": 24, "color": (200, 200, 200), "delay": 0.65},
+                {"text": "ディナー 17:30〜22:30（L.O.21:00）", "y": 1240, "size": 24, "color": (200, 200, 200), "delay": 0.68},
+                {"text": "定休日 不定休（ハービスPLAZA定休日に準ずる）", "y": 1275, "size": 22, "color": (180, 180, 180), "delay": 0.7},
+                {"text": "接待コース ¥8,800〜", "y": 1320, "size": 33, "color": GOLD, "bold": True, "delay": 0.75},
             ]
             frame = add_text_overlay(frame, info_texts, t_text)
 
