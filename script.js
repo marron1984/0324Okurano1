@@ -1,184 +1,302 @@
 /**
- * 禅園西梅田 - Instagram Reel Controller
- * Manages scene transitions, animations, and user controls
+ * 禅園西梅田 Instagram Reel Controller
+ *
+ * Instagram アルゴリズム最適化:
+ * - 最初の1秒でフック → 視聴維持率UP
+ * - 各シーン2.5〜4秒 → 飽きさせない展開
+ * - 合計約21秒 → リール最適尺
+ * - ループ再生 → 再生回数UP
+ *
+ * AI判定回避:
+ * - 実写写真のKen Burns効果のみ
+ * - テキストは最小限のオーバーレイ
+ * - 過剰なフィルター・エフェクト無し
  */
 
-class ReelController {
+class ReelPlayer {
     constructor() {
-        this.currentScene = 1;
-        this.totalScenes = 5;
-        this.sceneDuration = 4000; // 4 seconds per scene
-        this.isPlaying = true;
+        this.scenes = document.querySelectorAll('.scene');
+        this.totalScenes = this.scenes.length;
+        this.currentScene = 0;
+        this.isPlaying = false;
         this.timer = null;
-        this.startTime = null;
-
-        this.progressFill = document.getElementById('progressFill');
-        this.playPauseBtn = document.getElementById('playPauseBtn');
-        this.restartBtn = document.getElementById('restartBtn');
-        this.dots = document.querySelectorAll('.dot');
+        this.progressTimer = null;
 
         this.init();
     }
 
     init() {
+        this.preloadImages();
         this.bindEvents();
-        this.startAutoPlay();
-        this.updateProgress();
+        this.play();
+    }
+
+    preloadImages() {
+        const images = [
+            'assets/setting-sakura.jpg',
+            'assets/table-overhead.jpg',
+            'assets/dining-closeup.jpg',
+            'assets/dining-group.jpg',
+            'assets/dining-conversation.jpg',
+            'assets/counter-service.jpg',
+            'assets/celebration-menu.jpg'
+        ];
+        images.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
     }
 
     bindEvents() {
-        // Play/Pause button
-        this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
-
-        // Restart button
-        this.restartBtn.addEventListener('click', () => this.restart());
-
-        // Navigation dots
-        this.dots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const scene = parseInt(dot.dataset.scene);
-                this.goToScene(scene);
-            });
+        // Tap navigation (Instagram-style)
+        document.getElementById('tapLeft').addEventListener('click', () => {
+            this.prev();
         });
 
-        // Touch/Swipe support
-        let touchStartY = 0;
-        const reel = document.getElementById('reel');
+        document.getElementById('tapRight').addEventListener('click', () => {
+            this.next();
+        });
 
+        // Hold to pause
+        const reel = document.getElementById('reel');
+        let holdTimer = null;
+        let isHolding = false;
+
+        reel.addEventListener('mousedown', () => {
+            holdTimer = setTimeout(() => {
+                isHolding = true;
+                this.pause();
+            }, 200);
+        });
+
+        reel.addEventListener('mouseup', () => {
+            clearTimeout(holdTimer);
+            if (isHolding) {
+                isHolding = false;
+                this.resume();
+            }
+        });
+
+        reel.addEventListener('mouseleave', () => {
+            clearTimeout(holdTimer);
+            if (isHolding) {
+                isHolding = false;
+                this.resume();
+            }
+        });
+
+        // Touch hold to pause
         reel.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
+            holdTimer = setTimeout(() => {
+                isHolding = true;
+                this.pause();
+            }, 200);
         }, { passive: true });
 
-        reel.addEventListener('touchend', (e) => {
-            const touchEndY = e.changedTouches[0].clientY;
-            const diff = touchStartY - touchEndY;
-
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) {
-                    this.nextScene();
-                } else {
-                    this.prevScene();
-                }
+        reel.addEventListener('touchend', () => {
+            clearTimeout(holdTimer);
+            if (isHolding) {
+                isHolding = false;
+                this.resume();
             }
         }, { passive: true });
 
-        // Keyboard support
+        // Keyboard
         document.addEventListener('keydown', (e) => {
             switch (e.key) {
-                case 'ArrowDown':
                 case 'ArrowRight':
                 case ' ':
                     e.preventDefault();
-                    this.nextScene();
+                    this.next();
                     break;
-                case 'ArrowUp':
                 case 'ArrowLeft':
                     e.preventDefault();
-                    this.prevScene();
+                    this.prev();
                     break;
                 case 'r':
                     this.restart();
                     break;
-                case 'p':
-                    this.togglePlayPause();
-                    break;
             }
+        });
+
+        // Sound toggle (decorative)
+        document.getElementById('soundToggle').addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.currentTarget.classList.toggle('on');
         });
     }
 
-    startAutoPlay() {
-        this.stopAutoPlay();
-        this.isPlaying = true;
-        this.playPauseBtn.textContent = '⏸';
-        this.startTime = Date.now();
-
-        this.timer = setInterval(() => {
-            if (this.currentScene < this.totalScenes) {
-                this.nextScene();
-            } else {
-                this.stopAutoPlay();
-                this.playPauseBtn.textContent = '↺';
-            }
-        }, this.sceneDuration);
+    getSceneDuration(index) {
+        const scene = this.scenes[index];
+        return parseInt(scene.dataset.duration) || 3000;
     }
 
-    stopAutoPlay() {
+    play() {
+        this.isPlaying = true;
+        this.showScene(this.currentScene);
+    }
+
+    pause() {
+        this.isPlaying = false;
         if (this.timer) {
-            clearInterval(this.timer);
+            clearTimeout(this.timer);
             this.timer = null;
         }
-        this.isPlaying = false;
-        this.playPauseBtn.textContent = '▶';
+        if (this.progressTimer) {
+            cancelAnimationFrame(this.progressTimer);
+            this.progressTimer = null;
+        }
     }
 
-    togglePlayPause() {
-        if (this.currentScene === this.totalScenes && !this.isPlaying) {
-            this.restart();
-            return;
-        }
-
-        if (this.isPlaying) {
-            this.stopAutoPlay();
-        } else {
-            this.startAutoPlay();
+    resume() {
+        if (!this.isPlaying) {
+            this.isPlaying = true;
+            this.scheduleNext(1000); // Resume with 1s remaining
         }
     }
 
     restart() {
-        this.goToScene(1);
-        this.startAutoPlay();
+        this.pause();
+        this.resetAllProgress();
+        this.currentScene = 0;
+        this.scenes.forEach(s => {
+            s.classList.remove('active', 'crossfade-out');
+        });
+        this.play();
     }
 
-    goToScene(sceneNumber) {
-        if (sceneNumber < 1 || sceneNumber > this.totalScenes) return;
-        if (sceneNumber === this.currentScene) return;
+    showScene(index) {
+        // Deactivate all scenes
+        this.scenes.forEach((s, i) => {
+            if (i !== index) {
+                s.classList.remove('active');
+                s.classList.add('crossfade-out');
+                // Clean up after transition
+                setTimeout(() => s.classList.remove('crossfade-out'), 600);
+            }
+        });
 
-        // Deactivate current scene
-        const currentEl = document.getElementById(`scene${this.currentScene}`);
-        currentEl.classList.remove('active');
-        currentEl.classList.add('fade-out');
+        // Activate current
+        const scene = this.scenes[index];
+        scene.classList.remove('crossfade-out');
+        scene.classList.add('active');
 
-        // Activate new scene
-        this.currentScene = sceneNumber;
-        const newEl = document.getElementById(`scene${this.currentScene}`);
+        // Update progress bars
+        this.updateProgressBars(index);
 
-        setTimeout(() => {
-            currentEl.classList.remove('fade-out');
-            newEl.classList.add('active');
-        }, 100);
+        // Schedule next scene
+        const duration = this.getSceneDuration(index);
+        this.animateProgress(index, duration);
+        this.scheduleNext(duration);
+    }
 
-        // Update dots
-        this.dots.forEach(dot => dot.classList.remove('active'));
-        this.dots[this.currentScene - 1].classList.add('active');
+    scheduleNext(duration) {
+        if (this.timer) clearTimeout(this.timer);
 
-        // Update progress
-        this.updateProgress();
+        this.timer = setTimeout(() => {
+            if (!this.isPlaying) return;
 
-        // Reset autoplay timer
-        if (this.isPlaying) {
-            this.startAutoPlay();
+            if (this.currentScene < this.totalScenes - 1) {
+                this.currentScene++;
+                this.showScene(this.currentScene);
+            } else {
+                // Loop - restart from beginning
+                setTimeout(() => {
+                    this.restart();
+                }, 500);
+            }
+        }, duration);
+    }
+
+    updateProgressBars(activeIndex) {
+        const segments = document.querySelectorAll('.progress-segment');
+        segments.forEach((seg, i) => {
+            const fill = seg.querySelector('.progress-fill');
+            seg.classList.remove('active', 'completed');
+
+            if (i < activeIndex) {
+                seg.classList.add('completed');
+                fill.style.width = '100%';
+                fill.style.transition = 'none';
+            } else if (i === activeIndex) {
+                seg.classList.add('active');
+                fill.style.width = '0%';
+                fill.style.transition = 'none';
+            } else {
+                fill.style.width = '0%';
+                fill.style.transition = 'none';
+            }
+        });
+    }
+
+    animateProgress(sceneIndex, duration) {
+        const segment = document.querySelectorAll('.progress-segment')[sceneIndex];
+        if (!segment) return;
+
+        const fill = segment.querySelector('.progress-fill');
+        const startTime = performance.now();
+
+        const animate = (currentTime) => {
+            if (!this.isPlaying) return;
+
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            fill.style.width = `${progress * 100}%`;
+
+            if (progress < 1) {
+                this.progressTimer = requestAnimationFrame(animate);
+            }
+        };
+
+        if (this.progressTimer) cancelAnimationFrame(this.progressTimer);
+        this.progressTimer = requestAnimationFrame(animate);
+    }
+
+    resetAllProgress() {
+        document.querySelectorAll('.progress-fill').forEach(fill => {
+            fill.style.width = '0%';
+            fill.style.transition = 'none';
+        });
+        document.querySelectorAll('.progress-segment').forEach(seg => {
+            seg.classList.remove('active', 'completed');
+        });
+    }
+
+    next() {
+        if (this.timer) clearTimeout(this.timer);
+        if (this.progressTimer) cancelAnimationFrame(this.progressTimer);
+
+        if (this.currentScene < this.totalScenes - 1) {
+            this.currentScene++;
+        } else {
+            this.currentScene = 0;
+            this.resetAllProgress();
         }
+        this.showScene(this.currentScene);
     }
 
-    nextScene() {
-        if (this.currentScene < this.totalScenes) {
-            this.goToScene(this.currentScene + 1);
+    prev() {
+        if (this.timer) clearTimeout(this.timer);
+        if (this.progressTimer) cancelAnimationFrame(this.progressTimer);
+
+        if (this.currentScene > 0) {
+            this.currentScene--;
         }
-    }
 
-    prevScene() {
-        if (this.currentScene > 1) {
-            this.goToScene(this.currentScene - 1);
-        }
-    }
+        // Reset progress for scenes after current
+        const segments = document.querySelectorAll('.progress-segment');
+        segments.forEach((seg, i) => {
+            if (i >= this.currentScene) {
+                seg.querySelector('.progress-fill').style.width = '0%';
+                seg.classList.remove('active', 'completed');
+            }
+        });
 
-    updateProgress() {
-        const progress = (this.currentScene / this.totalScenes) * 100;
-        this.progressFill.style.width = `${progress}%`;
+        this.showScene(this.currentScene);
     }
 }
 
-// Initialize when DOM is ready
+// Start
 document.addEventListener('DOMContentLoaded', () => {
-    new ReelController();
+    new ReelPlayer();
 });
